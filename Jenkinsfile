@@ -16,10 +16,6 @@ def send_slack_notif_final(message) {
     message: message
 }
 
-def remote = [:]
-remote.name = "server-portal"
-remote.host = "10.10.0.129"
-remote.allowAnyHosts = true
 
 pipeline {
 	environment {
