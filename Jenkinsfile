@@ -1,7 +1,3 @@
-def getBuildUser() {
-    return currentBuild.rawBuild.getCause(Cause.UserIdCause).getUserId()
-}
-
 def send_slack_notif_step() {
   slackSend channel: '#jenkins-notifs',
     color: 'warning',
@@ -74,43 +70,16 @@ pipeline {
 			}
 			
 		}
-		
-		stage('Implement deps') {
-			parallel {
-				stage('[express-apis-app] install deps') {
-					steps {
-						nodejs('Node 14.5.0') {
-							sh '''
-								cd express-apis-app
-								npm install
-							'''
-						}
-						send_slack_notif_step()
-					}				
-				}
-				stage('[react-app] install deps') {
-					steps {
-						nodejs('Node 14.5.0') {
-							sh '''
-								cd react-app
-								npm install
-							'''
-						}
-						send_slack_notif_step()
-					}					
-				}
-				
-				
-			}
-			post {
-				always {
-					script {
-						FAILED_STAGE = env.STAGE_NAME
-					}
-				}
-
-			}
-		}
+        stage('install deps') {
+            steps {
+                nodejs('Node 14.5.0') {
+                    sh '''
+                        npm install
+                    '''
+                }
+                send_slack_notif_step()
+            }				
+        }
 		stage('Ponicode generates UT') {
 			steps('generate UT') {
 				nodejs('Node 14.5.0') {
@@ -123,44 +92,17 @@ pipeline {
 			}
 		}
 		stage('Run tests') {
-			parallel {
-				stage('[express-apis-app] run tests') {
-					steps {
-						catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-							nodejs('Node 14.5.0') {
-								sh '''
-									cd express-apis-app
-									npm run test:cov
-								'''
-							}
-							send_slack_notif_step()
-						}
-						
-					}				
-				}
-				stage('[react-app] run tests') {
-					steps {
-						catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-
-							nodejs('Node 14.5.0') {
-								sh '''
-									cd react-app
-									npm run test-non-int:cov
-								'''
-							}
-							send_slack_notif_step()
-						}
-					}					
-				}
-			}
-			post {
-				always {
-					script {
-						FAILED_STAGE = env.STAGE_NAME
-					}
-				}
-
-			}
+            steps {
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                    nodejs('Node 14.5.0') {
+                        sh '''
+                            npm run test:coverage
+                        '''
+                    }
+                    send_slack_notif_step()
+                }
+                
+            }					
 		}
 		stage('SonarQube analysis') {
 			environment {
