@@ -53,10 +53,8 @@ pipeline {
 						echo docker_mount_options
 						dockerImage.inside(docker_mount_options) { 
 							sh '''
-								cd /app/model
-								echo $PWD
+								cd /app/model/current_project
 								ls -l .
-								ls -l ./current_project/
 								poetry run python script_cli.py 10
 							'''
 						}
