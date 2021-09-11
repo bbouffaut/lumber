@@ -50,11 +50,15 @@ pipeline {
 						dockerImage = docker.image(registry + ponicode_square_image)
 						dockerImage.pull()
 						sh '''
-							echo ${PWD}
+							echo $PWD
 						'''
 						dockerImage.inside('-v ${PWD}:/app/model/current_project') { 
 							sh '''
-								cd /app/model; poetry run python script_cli.py 10
+								cd /app/model
+								echo $PWD
+								ls -l .
+								ls -l ./current_project/
+								poetry run python script_cli.py 10
 							'''
 						}
 					}
