@@ -48,6 +48,8 @@ pipeline {
 			steps{
 				script {
 					docker.withRegistry("https://" + registry, registryCredential) {
+						echo ${PWD}
+						echo ${env.WORKSPACE}
 						dockerImage = docker.image(registry + ponicode_square_image)
 						dockerImage.pull()
 						sh "docker run -v ${env.WORKSPACE}:/app/model/current_project ${registry}${ponicode_square_image} /bin/sh -c 'cd /app/model/; ls -l ./current_project/; poetry run python script_cli.py '${max_number_of_tasks}"
