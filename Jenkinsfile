@@ -15,7 +15,9 @@ def send_slack_notif_final(message) {
 
 pipeline {
 	environment {
-		SERVER_PORTAL_ADDRESS = '10.10.0.129'
+		registry = "https://registry.bbofamily.com"
+    	registryCredential = 'registry.bbofamily.com'
+		ponicode_square_image = 'ponicode-square:1.0'
 	}
 	agent any
   
@@ -44,9 +46,9 @@ pipeline {
 		stage('Run Ponicode Square Quality Gate') {
 			steps{
 				script {
-					docker.withRegistry('https://registry.bbofamily.com', 'registry.bbofamily.com') {
-						def myImg = docker.image('ponicode-square:1.0')
-						myImg.withRun('-v $PWD:/app/model/current_project ponicode/square') {c ->
+					docker.withRegistry(${registry}, ${registryCredential}) {
+						def myImg = docker.image(${ponicode_square_image})
+						myImg.withRun('-v ${PWD}:/app/model/current_project') {c ->
 							sh 'cd /app/model/; poetry run python script_cli.py 10'
 						}
 					}
