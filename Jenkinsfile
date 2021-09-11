@@ -50,7 +50,9 @@ pipeline {
 					docker.withRegistry("https://" + registry, registryCredential) {
 						dockerImage = docker.image(registry + ponicode_square_image)
 						dockerImage.pull()
-						sh "docker run -v ${env.WORKSPACE}:/app/model/current_project ${registry}${ponicode_square_image} /bin/sh -c 'cd /app/model/; poetry run python script_cli.py '${max_number_of_tasks}"
+						//sh "docker run -v ${env.WORKSPACE}:/app/model/current_project ${registry}${ponicode_square_image} /bin/sh -c 'cd /app/model/; poetry run python script_cli.py '${max_number_of_tasks}"
+						sh "docker run ${registry}${ponicode_square_image} /bin/sh -c 'cd /app/model/; poetry run python script_cli.py ${max_number_of_tasks} ${env.WORKSPACE}"
+
 					}
 				}
 				send_slack_notif_step()
