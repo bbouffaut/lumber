@@ -48,13 +48,11 @@ pipeline {
 				script {
 					docker.withRegistry("https://" + registry, registryCredential) {
 						dockerImage = docker.image(registry + ponicode_square_image)
-						dockerImage.pull()
-						docker_mount_options = "-v ${env.WORKSPACE}:/app/model/current_project"
-						echo docker_mount_options
-						dockerImage.inside(docker_mount_options) { 
+						dockerImage.inside() { 
+							sh "cp -R ${env.WORKSPACE} /app/model/current_project/"
 							sh '''
-								cd /app/model/current_project
-								ls -l .
+								cd /app/model/
+								ls -l ./current_project/
 								poetry run python script_cli.py 10
 							'''
 						}
