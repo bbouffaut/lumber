@@ -52,7 +52,7 @@ pipeline {
 						sh '''
 							echo $PWD
 						'''
-						dockerImage.inside('-v ${PWD}:/app/model/current_project') { 
+						dockerImage.inside('-v $PWD:/app/model/current_project') { 
 							sh '''
 								cd /app/model
 								echo $PWD
