@@ -17,7 +17,7 @@ pipeline {
 	environment {
 		registry = "https://registry.bbofamily.com"
     	registryCredential = 'registry.bbofamily.com'
-		ponicode_square_image = 'ponicode-square:1.0'
+		ponicode_square_image = 'open-elevation:1.0'
 	}
 	agent any
   
