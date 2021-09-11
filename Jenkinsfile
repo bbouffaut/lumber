@@ -49,12 +49,7 @@ pipeline {
 					docker.withRegistry("https://" + registry, registryCredential) {
 						dockerImage = docker.image(registry + ponicode_square_image)
 						dockerImage.inside() { 
-							sh "sudo cp -R ${env.WORKSPACE}/* /app/model/current_project/"
-							sh '''
-								cd /app/model/
-								ls -l ./current_project/
-								poetry run python script_cli.py 10
-							'''
+							sh "cd /app/model/; poetry run python script_cli.py 10 ${env.WORKSPACE}"							
 						}
 					}
 				}
