@@ -41,69 +41,29 @@ pipeline {
 				}
 			}
 		}
-		stage('install ponicode') {
-			steps('Install Ponicode CLI') {
-				nodejs('Node 14.5.0') {
-					sh '''
-						npm install -g ponicode
-					'''
-				}
-				send_slack_notif_step()
-			}
-		}
-
-		stage('Ponicode login') {
-			steps {
-				nodejs('Node 14.5.0') {
-					sh '''
-						if [ ! -d $HOME/.config ]; then mkdir $HOME/.config; elif [ ! -d $HOME/.config/ponicode ]; then mkdir $HOME/.config/ponicode; fi
-					'''
-				}
+		stage('Run Ponicode Square Quality Gate') {
+			steps{
 				script {
-                    def myJSON = readJSON text: '{}'
-                    myJSON = "${env.PONICODE_LOGIN}" as String
-					echo myJSON
-                    writeJSON file: "$HOME/.config/ponicode/settings.json", json: myJSON
-                }
-				
-				send_slack_notif_step()
-			}
-			
-		}
-        stage('install deps') {
-            steps {
-                nodejs('Node 14.5.0') {
-                    sh '''
-                        npm install
-                    '''
-                }
-                send_slack_notif_step()
-            }				
-        }
-		stage('Ponicode generates UT') {
-			steps('generate UT') {
-				nodejs('Node 14.5.0') {
-					sh '''
-						PC_VERBOSE=telemetry ponicode test ./
-					'''
+					docker.withRegistry('https://registry.bbofamily.com', 'registry.bbofamily.com') {
+						def myImg = docker.image('ponicode-square:1.0')
+						myImg.withRun('-v $PWD:/app/model/current_project ponicode/square') {c ->
+							sh 'cd /app/model/; poetry run python script_cli.py 10'
+						}
+					}
 				}
-				
 				send_slack_notif_step()
 			}
+			post {
+				always {
+					script {
+						FAILED_STAGE = env.STAGE_NAME
+					}
+				}
+
+			}
+
 		}
-		stage('Run tests') {
-            steps {
-                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                    nodejs('Node 14.5.0') {
-                        sh '''
-                            npm run test:coverage
-                        '''
-                    }
-                    send_slack_notif_step()
-                }
-                
-            }					
-		}
+		
 		stage('SonarQube analysis') {
 			environment {
 				scannerHome = tool 'SonarQube Scanner 3.3.0.1492'
