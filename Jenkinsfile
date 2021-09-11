@@ -15,9 +15,9 @@ def send_slack_notif_final(message) {
 
 pipeline {
 	environment {
-		registry = "https://registry.bbofamily.com"
+		registry = "registry.bbofamily.com/"
     	registryCredential = 'registry.bbofamily.com'
-		ponicode_square_image = 'ponicode-square'
+		ponicode_square_image = 'ponicode-square:1.0'
 	}
 	agent any
   
@@ -47,7 +47,7 @@ pipeline {
 			steps{
 				script {
 					docker.withRegistry(registry, registryCredential) {
-						docker.image(ponicode_square_image).withRun('-v ${PWD}:/app/model/current_project') {c ->
+						docker.image(registry + ponicode_square_image).withRun('-v ${PWD}:/app/model/current_project') {c ->
 							sh 'cd /app/model/; poetry run python script_cli.py 10'
 						}
 					}
