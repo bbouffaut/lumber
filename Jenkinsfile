@@ -45,14 +45,11 @@ pipeline {
 		}
 		stage('Run Ponicode Square Quality Gate') {
 			steps{
-				/*script {
-					docker.withRegistry(registry, registryCredential) {
-						dockerImage = docker.image(ponicode_square_image)						
-					}
-				}*/
 				script {
-					docker.image(ponicode_square_image).withRun('-v ${PWD}:/app/model/current_project') {c ->
-						sh 'cd /app/model/; poetry run python script_cli.py 10'
+					docker.withRegistry(registry, registryCredential) {
+						docker.image(ponicode_square_image).withRun('-v ${PWD}:/app/model/current_project') {c ->
+							sh 'cd /app/model/; poetry run python script_cli.py 10'
+						}
 					}
 				}
 				send_slack_notif_step()
