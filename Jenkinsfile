@@ -50,7 +50,8 @@ pipeline {
 						dockerImage = docker.image(registry + ponicode_square_image)
 						dockerImage.pull()
 						workspace = ${env.WORKSPACE}
-						dockerImage.inside('-v ${workspace}:/app/model/current_project') { 
+						echo workspace
+						dockerImage.inside('-v workspace:/app/model/current_project') { 
 							sh '''
 								cd /app/model
 								echo $PWD
