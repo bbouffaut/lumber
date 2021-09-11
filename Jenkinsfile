@@ -50,8 +50,8 @@ pipeline {
 						dockerImage = docker.image(registry + ponicode_square_image)
 						dockerImage.pull()
 						docker_mount_options = "-v ${env.WORKSPACE}:/app/model/current_project"
-						echo ${docker_mount_options}
-						dockerImage.inside(${docker_mount_options}) { 
+						echo docker_mount_options
+						dockerImage.inside(docker_mount_options) { 
 							sh '''
 								cd /app/model
 								echo $PWD
