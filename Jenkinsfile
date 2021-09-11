@@ -47,10 +47,10 @@ pipeline {
 			steps{
 				script {
 					docker.withRegistry(registry, registryCredential) {
-						def myImg = docker.image(ponicode_square_image)
-						myImg.withRun('-v ${PWD}:/app/model/current_project') {c ->
+						dockerImage = docker.image(ponicode_square_image)
+						/*dockerImage.withRun('-v ${PWD}:/app/model/current_project') {c ->
 							sh 'cd /app/model/; poetry run python script_cli.py 10'
-						}
+						}*/
 					}
 				}
 				send_slack_notif_step()
