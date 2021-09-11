@@ -48,7 +48,7 @@ pipeline {
 				script {
 					docker.withRegistry("https://" + registry, registryCredential) {
 						docker.image(registry + ponicode_square_image).withRun('-v ${PWD}:/app/model/current_project') {c ->
-							sh 'cd /app/model/; poetry run python script_cli.py 10'
+							sh 'poetry run python /app/model/script_cli.py 10'
 						}
 					}
 				}
