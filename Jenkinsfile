@@ -18,6 +18,7 @@ pipeline {
 		registry = "registry.bbofamily.com/"
     	registryCredential = 'registry.bbofamily.com'
 		ponicode_square_image = 'ponicode-square:1.1'
+		max_number_of_tasks = 10
 	}
 	agent any
   
@@ -48,9 +49,10 @@ pipeline {
 				script {
 					docker.withRegistry("https://" + registry, registryCredential) {
 						dockerImage = docker.image(registry + ponicode_square_image)
-						dockerImage.inside() { 
-							sh "cd /app/model/; poetry run python script_cli.py 10 ${env.WORKSPACE}"							
-						}
+						dockerImage.pull()
+						sh "docker run -v ${env.WORKSPACE}:/app/model/current_project ${registry}${ponicode_square_image} /bin/sh -c 'cd /app/model/; poetry run python script_cli.py '${max_number_of_tasks}"
+
+					}
 					}
 				}
 				send_slack_notif_step()
