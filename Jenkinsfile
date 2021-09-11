@@ -49,7 +49,8 @@ pipeline {
 					docker.withRegistry("https://" + registry, registryCredential) {
 						dockerImage = docker.image(registry + ponicode_square_image)
 						dockerImage.pull()
-						dockerImage.inside('-v ${env.WORKSPACE}:/app/model/current_project') { 
+						workspace = ${env.WORKSPACE}
+						dockerImage.inside('-v $workspace:/app/model/current_project') { 
 							sh '''
 								cd /app/model
 								echo $PWD
