@@ -17,7 +17,7 @@ pipeline {
 	environment {
 		registry = "registry.bbofamily.com/"
     	registryCredential = 'registry.bbofamily.com'
-		ponicode_square_image = 'ponicode-square:1.3_with_ts_server_logging'
+		ponicode_square_image = 'ponicode-square:1.4_with_ts_server_logging'
 		max_number_of_tasks = 10
 	}
 	agent any
@@ -50,7 +50,7 @@ pipeline {
 			steps{
 				script {
 					docker.withRegistry("https://" + env.registry, env.registryCredential) {
-						dockerImageOptions = "-u root"
+						dockerImageOptions = "-u root --network host"
 						docker.image(env.registry + env.ponicode_square_image).inside(dockerImageOptions) {
 							sh "ls -l ${env.WORKSPACE}"
 							sh "cd /app/model/; poetry config --list"
