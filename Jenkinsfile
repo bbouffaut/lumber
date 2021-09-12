@@ -43,6 +43,8 @@ pipeline {
 
 				checkout scm
 
+				sh "ls -l ${env.WORKSPACE}"
+
 			}
 			post {
 				always {
