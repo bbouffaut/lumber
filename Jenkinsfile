@@ -60,7 +60,8 @@ pipeline {
 								).trim()
 							}
 						}
-						sh "echo ${SQUARE_JSON} |jq .grade"
+						echo SQUARE_JSON
+						sh "echo ${SQUARE_JSON}"
 						GRADE = sh (
 							script: "echo \"${SQUARE_JSON}\" |jq .grade",
 							returnStdout: true
