@@ -52,6 +52,7 @@ pipeline {
 					docker.withRegistry("https://" + env.registry, env.registryCredential) {
 						dockerImageOptions = "-v ${env.WORKSPACE}:/app/model/current_project -u root"
 						docker.image(env.registry + env.ponicode_square_image).inside(dockerImageOptions) {
+							sh 'ls -l /app/model/current_project'
 							sh 'cd /app/model/; poetry config --list'
 							sh 'cd /app/model; poetry run python script_cli.py 10'
  						}
