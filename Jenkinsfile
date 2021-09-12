@@ -61,7 +61,7 @@ pipeline {
 							}
 						}
 						SQUARE_JSON =  readJSON text: SQUARE_JSON_STR
-						sh "echo ${SQUARE_JSON_STR} > ponicode_square_report.json"
+						sh "echo ${SQUARE_JSON} |jq '.' > ponicode_square_report.json"
 						GRADE = sh (
 							script: "echo ${SQUARE_JSON.grade}",
 							returnStdout: true
