@@ -12,6 +12,7 @@ def send_slack_notif_final(message) {
     message: message
 }
 
+stageResultMap = [:]
 
 pipeline {
 	environment {
@@ -49,16 +50,34 @@ pipeline {
 		stage('Run Ponicode Square Quality Gate') {
 			steps{
 				script {
-					docker.withRegistry("https://" + env.registry, env.registryCredential) {
-						dockerImageOptions = "-u root --network host"
-						docker.image(env.registry + env.ponicode_square_image).inside(dockerImageOptions) {
-							SQUARE_JSON = sh (
-								script: "export APP_ENV=local; export PORT=8002; cd /app/model; ./run_script_cli.sh 10 ${env.WORKSPACE} |jq .",
-								returnStdout: true
-							).trim()
-							echo SQUARE_JSON
- 						}
- 					}
+					try {                                        
+						docker.withRegistry("https://" + env.registry, env.registryCredential) {
+							dockerImageOptions = "-u root --network host"
+							docker.image(env.registry + env.ponicode_square_image).inside(dockerImageOptions) {
+								SQUARE_JSON = sh (
+									script: "export APP_ENV=local; export PORT=8002; cd /app/model; ./run_script_cli.sh 10 ${env.WORKSPACE} |jq .",
+									returnStdout: true
+								).trim()
+								echo SQUARE_JSON
+							}
+						}
+						GRADE = sh "echo ${SQUARE_JSON} |jq .grade"
+						if (GRADE == "A") {
+							sh "exit 1"
+							stageResultMap.squareGradeSucceed = true
+						} else {
+							unstable("${STAGE_NAME} failed!")
+							currentBuild.result = 'FAILURE'
+							stageResultMap.squareGradeSucceed = false
+						}
+						
+					}
+					catch (Exception e) {
+						unstable("${STAGE_NAME} failed!")
+						currentBuild.result = 'FAILURE'
+						stageResultMap.squareGradeSucceed = false                                        
+					}
+
 				}
 				send_slack_notif_step()
 			}
@@ -74,6 +93,11 @@ pipeline {
 		}
 		
 		stage('SonarQube analysis') {
+			when {
+				expression {
+					return stageResultMap.find{ it.key == "squareGradeSucceed" }?.value
+				}
+			}
 			environment {
 				scannerHome = tool 'SonarQube Scanner 3.3.0.1492'
 			}
