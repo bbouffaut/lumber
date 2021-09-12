@@ -17,7 +17,7 @@ pipeline {
 	environment {
 		registry = "registry.bbofamily.com/"
     	registryCredential = 'registry.bbofamily.com'
-		ponicode_square_image = 'ponicode-square:1.6'
+		ponicode_square_image = 'ponicode-square:1.6.2'
 		max_number_of_tasks = 10
 	}
 	agent any
@@ -52,7 +52,11 @@ pipeline {
 					docker.withRegistry("https://" + env.registry, env.registryCredential) {
 						dockerImageOptions = "-u root --network host"
 						docker.image(env.registry + env.ponicode_square_image).inside(dockerImageOptions) {
-							sh "export APP_ENV=local; export PORT=8002; cd /app/model; ./run_script_cli.sh 10 ${env.WORKSPACE} |jq ."
+							SQUARE_JSON = sh (
+								script: "export APP_ENV=local; export PORT=8002; cd /app/model; ./run_script_cli.sh 10 ${env.WORKSPACE} |jq .",
+								returnStdout: true
+							).trim()
+							echo SQUARE_JSON
  						}
  					}
 				}
