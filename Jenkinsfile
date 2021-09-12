@@ -62,7 +62,7 @@ pipeline {
 							}
 						}
 						GRADE = sh (
-							script: "echo ${SQUARE_JSON} |jq .grade",
+							script: "echo ${SQUARE_JSON} |jq '.grade'",
 							returnStdout: true
 						)
 						echo GRADE
