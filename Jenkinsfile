@@ -17,7 +17,7 @@ pipeline {
 	environment {
 		registry = "registry.bbofamily.com/"
     	registryCredential = 'registry.bbofamily.com'
-		ponicode_square_image = 'ponicode-square:1.5'
+		ponicode_square_image = 'ponicode-square:1.6'
 		max_number_of_tasks = 10
 	}
 	agent any
@@ -52,9 +52,7 @@ pipeline {
 					docker.withRegistry("https://" + env.registry, env.registryCredential) {
 						dockerImageOptions = "-u root --network host"
 						docker.image(env.registry + env.ponicode_square_image).inside(dockerImageOptions) {
-							sh "ls -l ${env.WORKSPACE}"
-							sh "cd /app/model/; poetry config --list"
-							sh "export APP_ENV=local; export PORT=8002; cd /app/model; poetry run python script_cli.py 10 ${env.WORKSPACE}"
+							sh "export APP_ENV=local; export PORT=8002; cd /app/model; ./run_script_cli.sh 10 ${env.WORKSPACE} |jq ."
  						}
  					}
 				}
