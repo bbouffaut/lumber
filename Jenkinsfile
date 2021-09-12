@@ -22,9 +22,9 @@ pipeline {
 	}
 	agent {
 		docker {
-			image ponicode_square_image
-        	registryUrl "https://${registry}"
-        	registryCredentialsId registryCredential
+			image env.ponicode_square_image
+        	registryUrl "https://${env.registry}"
+        	registryCredentialsId env.registryCredential
 		}
 	}
   
