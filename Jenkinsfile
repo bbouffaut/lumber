@@ -17,7 +17,7 @@ pipeline {
 	environment {
 		registry = "registry.bbofamily.com/"
     	registryCredential = 'registry.bbofamily.com'
-		ponicode_square_image = 'ponicode-square:1.3_with_logging'
+		ponicode_square_image = 'ponicode-square:1.3_with_ts_server_logging'
 		max_number_of_tasks = 10
 	}
 	agent any
