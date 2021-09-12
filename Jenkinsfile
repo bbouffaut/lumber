@@ -54,7 +54,7 @@ pipeline {
 						docker.image(env.registry + env.ponicode_square_image).inside(dockerImageOptions) {
 							sh "ls -l ${env.WORKSPACE}"
 							sh "cd /app/model/; poetry config --list"
-							sh "cd /app/model; poetry run python script_cli.py 10 ${env.WORKSPACE}"
+							sh "export APP_ENV=local; export PORT=8002; cd /app/model; poetry run python script_cli.py 10 ${env.WORKSPACE}"
  						}
  					}
 				}
