@@ -17,7 +17,7 @@ pipeline {
 	environment {
 		registry = "registry.bbofamily.com/"
     	registryCredential = 'registry.bbofamily.com'
-		ponicode_square_image = 'ponicode-square:1.4_with_ts_server_logging'
+		ponicode_square_image = 'ponicode-square:1.5'
 		max_number_of_tasks = 10
 	}
 	agent any
@@ -72,14 +72,6 @@ pipeline {
 		}
 		
 		stage('SonarQube analysis') {
-			agent {
-				docker {
-					image env.ponicode_square_image
-					registryUrl "https://${env.registry}"
-					registryCredentialsId env.registryCredential
-					reuseNode true
-				}
-			}
 			environment {
 				scannerHome = tool 'SonarQube Scanner 3.3.0.1492'
 			}
