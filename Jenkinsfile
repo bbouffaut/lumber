@@ -20,7 +20,13 @@ pipeline {
 		ponicode_square_image = 'ponicode-square:1.2'
 		max_number_of_tasks = 10
 	}
-	agent any
+	agent {
+		docker {
+			image ponicode_square_image
+        	registryUrl "https://${registry}"
+        	registryCredentialsId registryCredential
+		}
+	}
   
 	stages {
 
@@ -47,15 +53,8 @@ pipeline {
 		stage('Run Ponicode Square Quality Gate') {
 			steps{
 				script {
-					docker.withRegistry("https://" + registry, registryCredential) {
-						echo env.WORKSPACE
-						sh "ls -l ${env.WORKSPACE}"
-						dockerImage = docker.image(registry + ponicode_square_image)
-						dockerImage.pull()
-						//sh "docker run -v ${env.WORKSPACE}:/app/model/current_project ${registry}${ponicode_square_image} /bin/sh -c 'cd /app/model/; ls -l ./current_project/; poetry run python script_cli.py '${max_number_of_tasks}"
-						sh "docker run ${registry}${ponicode_square_image} /bin/sh -c 'cd /app/model/; ls -l ${env.WORKSPACE}; poetry run python script_cli.py ${max_number_of_tasks} ${env.WORKSPACE}'"
-
-					}
+					sh "cd /app/model/; poetry run python script_cli.py ${max_number_of_tasks} ${env.WORKSPACE}"
+					//sh "docker run ${registry}${ponicode_square_image} /bin/sh -c 'cd /app/model/; ls -l ${env.WORKSPACE}; poetry run python script_cli.py ${max_number_of_tasks} ${env.WORKSPACE}'"
 				}
 				send_slack_notif_step()
 			}
