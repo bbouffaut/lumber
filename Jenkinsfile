@@ -20,17 +20,19 @@ pipeline {
 		ponicode_square_image = 'ponicode-square:1.2'
 		max_number_of_tasks = 10
 	}
-	agent {
-		docker {
-			image env.ponicode_square_image
-        	registryUrl "https://${env.registry}"
-        	registryCredentialsId env.registryCredential
-		}
-	}
-  
+	agent any
+
 	stages {
 
 		stage('Cloning git') {
+			agent {
+				docker {
+					image env.ponicode_square_image
+					registryUrl "https://${env.registry}"
+					registryCredentialsId env.registryCredential
+					reuseNode true
+				}
+			}
 			steps {
 
 				bitbucketStatusNotify(buildState: 'INPROGRESS')
@@ -51,6 +53,14 @@ pipeline {
 			}
 		}
 		stage('Run Ponicode Square Quality Gate') {
+			agent {
+				docker {
+					image env.ponicode_square_image
+					registryUrl "https://${env.registry}"
+					registryCredentialsId env.registryCredential
+					reuseNode true
+				}
+			}
 			steps{
 				script {
 					sh "cd /app/model/; poetry run python script_cli.py ${max_number_of_tasks} ${env.WORKSPACE}"
@@ -70,6 +80,14 @@ pipeline {
 		}
 		
 		stage('SonarQube analysis') {
+			agent {
+				docker {
+					image env.ponicode_square_image
+					registryUrl "https://${env.registry}"
+					registryCredentialsId env.registryCredential
+					reuseNode true
+				}
+			}
 			environment {
 				scannerHome = tool 'SonarQube Scanner 3.3.0.1492'
 			}
