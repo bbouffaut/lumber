@@ -58,13 +58,13 @@ pipeline {
 									script: "export APP_ENV=local; export PORT=8002; cd /app/model; ./run_script_cli.sh 10 ${env.WORKSPACE} |jq .",
 									returnStdout: true
 								).trim()
-								echo SQUARE_JSON
 							}
 						}
+						echo SQUARE_JSON
 						GRADE = sh (
 							script: "echo ${SQUARE_JSON} |jq '.grade'",
 							returnStdout: true
-						)
+						).trim()
 						echo GRADE
 						if (GRADE == "A") {
 							sh "exit 1"
