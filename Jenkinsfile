@@ -65,6 +65,7 @@ pipeline {
 			}
 			steps{
 				script {
+					sh "ls -l ${env.WORKSPACE}"
 					sh "cd /app/model/; poetry run python script_cli.py ${max_number_of_tasks} ${env.WORKSPACE}"
 					//sh "docker run ${registry}${ponicode_square_image} /bin/sh -c 'cd /app/model/; ls -l ${env.WORKSPACE}; poetry run python script_cli.py ${max_number_of_tasks} ${env.WORKSPACE}'"
 				}
