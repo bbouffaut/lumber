@@ -61,14 +61,13 @@ pipeline {
 							}
 						}
 						SQUARE_JSON =  readJSON text: SQUARE_JSON_STR
-						sh "echo ${SQUARE_JSON.grade}"
 						GRADE = sh (
 							script: "echo ${SQUARE_JSON.grade}",
 							returnStdout: true
 						).trim()
-						sh "echo ${GRADE}"
+						echo GRADE
 						if (GRADE == "A") {
-							sh "exit 1"
+							sh "exit 0"
 							stageResultMap.squareGradeSucceed = true
 						} else {
 							unstable("${STAGE_NAME} failed!")
