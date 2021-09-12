@@ -61,7 +61,11 @@ pipeline {
 								echo SQUARE_JSON
 							}
 						}
-						GRADE = sh "echo ${SQUARE_JSON} |jq .grade"
+						GRADE = sh (
+							script: "echo ${SQUARE_JSON} |jq .grade"
+							returnStdout: true
+						)
+						echo GRADE
 						if (GRADE == "A") {
 							sh "exit 1"
 							stageResultMap.squareGradeSucceed = true
