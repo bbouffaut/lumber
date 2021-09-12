@@ -54,16 +54,16 @@ pipeline {
 						docker.withRegistry("https://" + env.registry, env.registryCredential) {
 							dockerImageOptions = "-u root --network host"
 							docker.image(env.registry + env.ponicode_square_image).inside(dockerImageOptions) {
-								SQUARE_JSON = sh (
+								SQUARE_JSON_STR = sh (
 									script: "export APP_ENV=local; export PORT=8002; cd /app/model; ./run_script_cli.sh 10 ${env.WORKSPACE} |jq .",
 									returnStdout: true
 								).trim()
 							}
 						}
-						echo SQUARE_JSON
-						sh "echo ${SQUARE_JSON}"
+						SQUARE_JSON =  readJSON text: SQUARE_JSON_STR
+						sh "echo ${SQUARE_JSON.grade}"
 						GRADE = sh (
-							script: "echo \"${SQUARE_JSON}\" |jq .grade",
+							script: "echo ${SQUARE_JSON.grade}",
 							returnStdout: true
 						).trim()
 						sh "echo ${GRADE}"
