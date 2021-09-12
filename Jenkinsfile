@@ -17,7 +17,7 @@ pipeline {
 	environment {
 		registry = "registry.bbofamily.com/"
     	registryCredential = 'registry.bbofamily.com'
-		ponicode_square_image = 'ponicode-square:1.2'
+		ponicode_square_image = 'ponicode-square:1.3'
 		max_number_of_tasks = 10
 	}
 	agent any
@@ -52,9 +52,7 @@ pipeline {
 					docker.withRegistry("https://" + env.registry, env.registryCredential) {
 						dockerImageOptions = "-v ${env.WORKSPACE}:/app/model/current_project"
 						docker.image(env.registry + env.ponicode_square_image).inside(dockerImageOptions) {
-							sh 'less /etc/passwd'
 							sh 'cd /app/model'
-							sh 'poetry config cache-dir /app/'
 							sh 'poetry run python script_cli.py 10'
  						}
  					}
