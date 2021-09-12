@@ -49,9 +49,8 @@ pipeline {
 		stage('Run Ponicode Square Quality Gate') {
 			steps{
 				script {
-					docker.withRegistry(env.registry, env.registryCredential) {
-						dockerImage = docker.image(env.ponicode_square_image)
-						dockerImage.withRun('-v ${env.WORKSPACE}:/app/model/current_project') {c ->
+					docker.withRegistry("https://" + env.registry, env.registryCredential) {
+						docker.image(env.registry + env.ponicode_square_image).withRun('-v ${env.WORKSPACE}:/app/model/current_project') {c ->
 							sh 'cd /app/model/; poetry run python script_cli.py 10'
  						}
  					}
