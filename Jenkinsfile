@@ -25,14 +25,6 @@ pipeline {
 	stages {
 
 		stage('Cloning git') {
-			agent {
-				docker {
-					image env.ponicode_square_image
-					registryUrl "https://${env.registry}"
-					registryCredentialsId env.registryCredential
-					reuseNode true
-				}
-			}
 			steps {
 
 				bitbucketStatusNotify(buildState: 'INPROGRESS')
@@ -55,19 +47,14 @@ pipeline {
 			}
 		}
 		stage('Run Ponicode Square Quality Gate') {
-			agent {
-				docker {
-					image env.ponicode_square_image
-					registryUrl "https://${env.registry}"
-					registryCredentialsId env.registryCredential
-					reuseNode true
-				}
-			}
 			steps{
 				script {
-					sh "ls -l ${env.WORKSPACE}"
-					sh "cd /app/model/; poetry run python script_cli.py ${max_number_of_tasks} ${env.WORKSPACE}"
-					//sh "docker run ${registry}${ponicode_square_image} /bin/sh -c 'cd /app/model/; ls -l ${env.WORKSPACE}; poetry run python script_cli.py ${max_number_of_tasks} ${env.WORKSPACE}'"
+					docker.withRegistry(env.registry, env.registryCredential) {
+						dockerImage = docker.image(env.ponicode_square_image})
+						dockerImage.withRun('-v ${env.WORKSPACE}:/app/model/current_project') {c ->
+							sh 'cd /app/model/; poetry run python script_cli.py 10'
+ 						}
+ 					}
 				}
 				send_slack_notif_step()
 			}
