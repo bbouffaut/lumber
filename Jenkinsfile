@@ -50,7 +50,7 @@ pipeline {
 			steps{
 				script {
 					docker.withRegistry(env.registry, env.registryCredential) {
-						dockerImage = docker.image(env.ponicode_square_image})
+						dockerImage = docker.image(env.ponicode_square_image)
 						dockerImage.withRun('-v ${env.WORKSPACE}:/app/model/current_project') {c ->
 							sh 'cd /app/model/; poetry run python script_cli.py 10'
  						}
