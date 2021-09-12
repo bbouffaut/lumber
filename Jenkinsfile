@@ -88,34 +88,108 @@ pipeline {
 			}
 			post {
 				always {
-					archiveArtifacts artifacts: 'ponicode_square_report.json', onlyIfSuccessful: true
-					script {
-						FAILED_STAGE = env.STAGE_NAME
-					}
+					archiveArtifacts artifacts: 'ponicode_square_report.json', onlyIfSuccessful: false
 				}
-
 			}
 
 		}
-		
+		stage('SQUARE is < A => Launch Ponicode UT pipeline!') {
+            // Execute only if SQUARE fails
+            when {
+                expression {
+                    return ! stageResultMap.find{ it.key == "squareGradeSucceed" }?.value
+                }
+            }
+
+            stages {
+
+                stage('install ponicode') {
+                    steps('Install Ponicode CLI') {
+                        nodejs('Node 14.5.0') {
+                            sh '''
+                                npm install -g ponicode
+                            '''
+                        }
+                        send_slack_notif_step()
+                    }
+                }
+
+                stage('Ponicode login') {
+                    steps {
+                        nodejs('Node 14.5.0') {
+                            sh '''
+                                if [ ! -d $HOME/.config ]; then mkdir $HOME/.config; elif [ ! -d $HOME/.config/ponicode ]; then mkdir $HOME/.config/ponicode; fi
+                            '''
+                        }
+                        script {
+                            def myJSON = readJSON text: '{}'
+                            myJSON = "${env.PONICODE_LOGIN}" as String
+                            echo myJSON
+                            writeJSON file: "$HOME/.config/ponicode/settings.json", json: myJSON
+                        }
+                        
+                        send_slack_notif_step()
+                    }
+                    
+                }
+                stage('install deps') {
+                    
+                    steps {
+                        catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
+                            nodejs('Node 14.5.0') {
+                                sh '''
+                                    npm install
+                                '''
+                            }
+                        }
+                        send_slack_notif_step()
+                    }				
+                }
+                stage('Ponicode generates UT') {
+                    steps('generate UT') {
+                        nodejs('Node 14.5.0') {
+                            sh '''
+                                PC_VERBOSE=telemetry ponicode test ./
+                            '''
+                        }
+                        
+                        send_slack_notif_step()
+                    }
+                }
+                stage('Run tests') {
+                    steps {
+                        catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                            nodejs('Node 14.5.0') {
+                                sh '''
+                                    npm run test
+                                '''
+                            }
+                            send_slack_notif_step()
+                        }
+                        
+                    }					
+                }
+
+            }
+
+            
+        }
 		stage('SonarQube analysis') {
-			when {
-				expression {
-					return stageResultMap.find{ it.key == "squareGradeSucceed" }?.value
-				}
-			}
 			environment {
 				scannerHome = tool 'SonarQube Scanner 3.3.0.1492'
 			}
 
 			steps {
-				nodejs('Node 14.5.0') {
+                catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
 
-					withSonarQubeEnv('Bbofamily SonarQube') {
-						sh "${scannerHome}/bin/sonar-scanner"
-					}
+                    nodejs('Node 14.5.0') {
 
-				}
+                        withSonarQubeEnv('Bbofamily SonarQube') {
+                            sh "${scannerHome}/bin/sonar-scanner"
+                        }
+
+                    }
+                }
 
 				send_slack_notif_step()
 			}
