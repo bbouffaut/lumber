@@ -55,14 +55,14 @@ pipeline {
 							dockerImageOptions = "-u root --network host"
 							docker.image(env.registry + env.ponicode_square_image).inside(dockerImageOptions) {
 								SQUARE_JSON = sh (
-									script: "export APP_ENV=local; export PORT=8002; cd /app/model; ./run_script_cli.sh 10 ${env.WORKSPACE} |jq .",
+									script: "export APP_ENV=local; export PORT=8002; cd /app/model; ./run_script_cli.sh 10 ${env.WORKSPACE}",
 									returnStdout: true
 								).trim()
 							}
 						}
-						echo SQUARE_JSON
+						sh "echo ${SQUARE_JSON} |jq ."
 						GRADE = sh (
-							script: "echo ${SQUARE_JSON} |jq '.grade'",
+							script: "echo ${SQUARE_JSON} |jq .grade",
 							returnStdout: true
 						).trim()
 						echo GRADE
