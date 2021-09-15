@@ -50,6 +50,11 @@ pipeline {
 		stage('Run Ponicode Square Quality Gate') {
 			steps{
 				script {
+
+					//DEBUG
+					withCredentials([usernameColonPassword(credentialsId: env.registryCredential, variable: 'USERPASS')]) {
+						println "${USERPASS}"
+					}
 		                                      
 					docker.withRegistry("https://" + env.registry, env.registryCredential) {
 						dockerImageOptions = "-u root --network host"
