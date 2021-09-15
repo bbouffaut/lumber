@@ -50,39 +50,32 @@ pipeline {
 		stage('Run Ponicode Square Quality Gate') {
 			steps{
 				script {
-					try {                                        
-						docker.withRegistry("https://" + env.registry, env.registryCredential) {
-							dockerImageOptions = "-u root --network host"
-							docker.image(env.registry + env.ponicode_square_image).inside(dockerImageOptions) {
-								SQUARE_JSON_STR = sh (
-									script: "export APP_ENV=local; export PORT=8002; cd /app/model; poetry run python -W ignore script_cli.py 10 ${env.WORKSPACE} |jq .",
-									returnStdout: true
-								).trim()
-							}
+		                                      
+					docker.withRegistry("https://" + env.registry, env.registryCredential) {
+						dockerImageOptions = "-u root --network host"
+						docker.image(env.registry + env.ponicode_square_image).inside(dockerImageOptions) {
+							SQUARE_JSON_STR = sh (
+								script: "export APP_ENV=local; export PORT=8002; cd /app/model; poetry run python -W ignore script_cli.py 10 ${env.WORKSPACE} |jq .",
+								returnStdout: true
+							).trim()
 						}
-						SQUARE_JSON =  readJSON text: SQUARE_JSON_STR
-						writeJSON(file: 'ponicode_square_report.json', json: SQUARE_JSON)
-						GRADE = sh (
-							script: "echo ${SQUARE_JSON.grade}",
-							returnStdout: true
-						).trim()
-						echo GRADE
-						if (GRADE == "A") {
-							sh "exit 0"
-							stageResultMap.squareGradeSucceed = true
-						} else {
-							unstable("${STAGE_NAME} failed!")
-							currentBuild.result = 'FAILURE'
-							stageResultMap.squareGradeSucceed = false
-						}
-						
 					}
-					catch (Exception e) {
+					SQUARE_JSON =  readJSON text: SQUARE_JSON_STR
+					writeJSON(file: 'ponicode_square_report.json', json: SQUARE_JSON)
+					GRADE = sh (
+						script: "echo ${SQUARE_JSON.grade}",
+						returnStdout: true
+					).trim()
+					echo GRADE
+					if (GRADE == "A") {
+						sh "exit 0"
+						stageResultMap.squareGradeSucceed = true
+					} else {
 						unstable("${STAGE_NAME} failed!")
 						currentBuild.result = 'FAILURE'
-						stageResultMap.squareGradeSucceed = false                                        
+						stageResultMap.squareGradeSucceed = false
 					}
-
+					
 				}
 				send_slack_notif_step()
 			}
