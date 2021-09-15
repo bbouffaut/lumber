@@ -17,7 +17,7 @@ stageResultMap = [:]
 pipeline {
 	environment {
 		registry = "ponicodesquarepublicregistry.azurecr.io/"
-    	registryCredential = 'ponicodesquarepublicregistry'
+    	registryCredential = 'registry.bbofamily.com'
 		ponicode_square_image = 'ponicode-square:latest'
 		max_number_of_tasks = 10
 	}
