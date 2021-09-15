@@ -56,7 +56,7 @@ pipeline {
 						println "${USERPASS}"
 					}
 		                                      
-					withDockerRegistry([credentialsId: env.registryCredential, url: "https://" + env.registry]) {
+					docker.withRegistry("https://" + env.registry, env.registryCredential) {
 						dockerImageOptions = "-u root --network host"
 						docker.image(env.registry + env.ponicode_square_image).inside(dockerImageOptions) {
 							SQUARE_JSON_STR = sh (
