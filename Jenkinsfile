@@ -17,7 +17,7 @@ stageResultMap = [:]
 pipeline {
 	environment {
 		registry = "ponicodesquarepublicregistry.azurecr.io/"
-    	registryCredential = 'ponicodesquarepublicregistry'
+    	registryCredential = 'bitbucket_notifier'
 		ponicode_square_image = 'ponicode-square:latest'
 		max_number_of_tasks = 10
 	}
