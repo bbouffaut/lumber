@@ -55,7 +55,7 @@ pipeline {
 							dockerImageOptions = "-u root --network host"
 							docker.image(env.registry + env.ponicode_square_image).inside(dockerImageOptions) {
 								SQUARE_JSON_STR = sh (
-									script: "export APP_ENV=local; export PORT=8002; cd /app/model; ./run_script_cli.sh 10 ${env.WORKSPACE} |jq .",
+									script: "export APP_ENV=local; export PORT=8002; cd /app/model; poetry run python -W ignore script_cli.py 10 ${env.WORKSPACE} |jq .",
 									returnStdout: true
 								).trim()
 							}
