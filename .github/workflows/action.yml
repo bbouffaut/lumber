@@ -24,5 +24,4 @@ jobs:
         with:
           format: 'json'
       - run: |
-          added_modified <<<"$(jq -r '.[]' <<<'${{ steps.get_changed_files.outputs.added_modified }}')"
-          echo "${added_modified}"
+          echo $(jq -r '.[]' <<<'${{ steps.get_changed_files.outputs.added_modified }}')
