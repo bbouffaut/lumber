@@ -24,4 +24,4 @@ jobs:
         with:
           format: 'json'
       - run: |
-          echo "${steps.get-changed-files.outputs.added_modified"
+          echo "${steps.get-changed-files.outputs.added_modified}"
