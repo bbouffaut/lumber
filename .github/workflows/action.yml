@@ -24,7 +24,4 @@ jobs:
         with:
           format: 'json'
       - run: |
-          readarray -t added_modified_files <<<"$(jq -r '.[]' <<<'${{ steps.files.outputs.added_modified }}')"
-          for file in ${added_modified_files[@]}; do
-            echo "${file}"
-          done
+          echo "${steps.get-changed-files.outputs.added_modified"
