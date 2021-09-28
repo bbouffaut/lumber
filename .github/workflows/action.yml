@@ -29,6 +29,6 @@ jobs:
         with:
           format: 'json'
       - run: |
-          echo ${{ steps.get_changed_files.outputs.added_modified }} >> ${{ SQUAR_JSON_INPUT }}
-          echo ${GITHUB_REF##*/} >> ${{ SQUAR_JSON_INPUT }}
-          echo ${{github.repository}} >> ${{ SQUAR_JSON_INPUT }}
+          echo ${{ steps.get_changed_files.outputs.added_modified }} >> ${{ env.SQUAR_JSON_INPUT }}
+          echo ${GITHUB_REF##*/} >> ${{ env.SQUAR_JSON_INPUT }}
+          echo ${{github.repository}} >> ${{ env.SQUAR_JSON_INPUT }}
