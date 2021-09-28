@@ -32,3 +32,4 @@ jobs:
           echo ${{ steps.get_changed_files.outputs.added_modified }} >> ${{ env.SQUAR_JSON_INPUT }}
           echo ${GITHUB_REF##*/} >> ${{ env.SQUAR_JSON_INPUT }}
           echo ${{github.repository}} >> ${{ env.SQUAR_JSON_INPUT }}
+          cat ${{ env.SQUAR_JSON_INPUT }}
