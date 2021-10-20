@@ -19,3 +19,5 @@ program
   .command('logout', 'log out from Forest Admin API')
   .command('update', 'update your project by generating files that does not currently exist')
   .parse(process.argv);
+
+// CI testing
