@@ -1,5 +1,7 @@
 name: "ponicode-ci"
-on: [pull_request]
+on:
+  pull_request_target:
+    types: [ opened, edited, synchronize ]  # rebuild any PRs and main branch changes
 
 jobs:
   ponicode:
