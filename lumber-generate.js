@@ -80,3 +80,5 @@ program
     logs,
   });
 });
+
+// E2E test

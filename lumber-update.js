@@ -96,3 +96,5 @@ const {
 })().catch(async (error) => {
   await errorHandler.handle(error);
 });
+
+// E2E test
