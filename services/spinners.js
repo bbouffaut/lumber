@@ -47,3 +47,5 @@ module.exports = {
     return spinner;
   },
 };
+
+// SQUAR Action E2E test
