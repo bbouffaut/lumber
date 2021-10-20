@@ -27,7 +27,7 @@ jobs:
       run: echo "::set-output name=BRANCH_NAME::$(echo ${GITHUB_HEAD_REF})"
     
     # Run Ponicode SQUAR action
-    - uses: ponicode/squar_action@v0.1.2-alpha
+    - uses: ponicode/squar_action@public/master
       with:
         repoURL: ${{github.repository}} # DO NOT MODIFY
         impactedFiles: ${{ steps.get_changed_files.outputs.added_modified }} # DO NOT MODIFY
