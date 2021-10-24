@@ -28,14 +28,20 @@ jobs:
     
     # Run Ponicode SQUAR action
     - uses: ponicode/squar_action@public/master
+      id: ponicode_squar
       with:
         repoURL: ${{github.repository}} # DO NOT MODIFY
         impactedFiles: ${{ steps.get_changed_files.outputs.added_modified }} # DO NOT MODIFY
         branch: ${{ steps.extract_branch.outputs.BRANCH_NAME }} # DO NOT MODIFY
         githubToken: ${{ secrets.GITHUB_TOKEN }} # DO NOT MODIFY
         ponicodeSquarToken: ${{ secrets.PONICODE_SQUAR_TOKEN }}
-        ponicodeUtToken: ${{ secrets.PONICODE_TOKEN }}
-        bootstrapUT: 'true'
         displayFullReport: 'true'
+    - uses: ponicode/unit-testing-action@master
+      with:
+        repoURL: ${{github.repository}} # DO NOT MODIFY
+        impactedFiles: ${{ steps.ponicode_squar.outputs.impacted_files }} # DO NOT MODIFY
+        branch: ${{ steps.extract_branch.outputs.BRANCH_NAME }} # DO NOT MODIFY
+        githubToken: ${{ secrets.GITHUB_TOKEN }} # DO NOT MODIFY
+        ponicodeUtToken: ${{ secrets.PONICODE_TOKEN }}
 
         
