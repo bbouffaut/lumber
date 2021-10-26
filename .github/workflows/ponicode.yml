@@ -6,9 +6,9 @@ on:
 jobs:
   ponicode:
     runs-on: ubuntu-latest
-    env:
-      SQUAR_API_URL: "https://ponicode-glados-prod.azurewebsites.net"
-      FETCH_REPORT_RETRY_MILLISEC: 5000
+    #env:
+    #  SQUAR_API_URL: "https://ponicode-glados-prod.azurewebsites.net"
+    #  FETCH_REPORT_RETRY_MILLISEC: 5000
     steps:
     - uses: actions/checkout@v1
     - run: |
@@ -27,22 +27,23 @@ jobs:
       run: echo "::set-output name=BRANCH_NAME::$(echo ${GITHUB_HEAD_REF})"
     
     # Run Ponicode SQUAR action
-    - uses: ponicode/squar_action@public/master
-      id: ponicode_squar
-      with:
-        repoURL: ${{github.repository}} # DO NOT MODIFY
-        impactedFiles: ${{ steps.get_changed_files.outputs.added_modified }} # DO NOT MODIFY
-        branch: ${{ steps.extract_branch.outputs.BRANCH_NAME }} # DO NOT MODIFY
-        githubToken: ${{ secrets.GITHUB_TOKEN }} # DO NOT MODIFY
-        ponicodeSquarToken: ${{ secrets.PONICODE_SQUAR_TOKEN }} # DO NOT MODIFY
-        displayFullReport: 'true'
+    #- uses: ponicode/squar_action@public/master
+    #  id: ponicode_squar
+    #  with:
+    #    repoURL: ${{github.repository}} # DO NOT MODIFY
+    #    impactedFiles: ${{ steps.get_changed_files.outputs.added_modified }} # DO NOT MODIFY
+    #    branch: ${{ steps.extract_branch.outputs.BRANCH_NAME }} # DO NOT MODIFY
+    #    githubToken: ${{ secrets.GITHUB_TOKEN }} # DO NOT MODIFY
+    #    ponicodeSquarToken: ${{ secrets.PONICODE_SQUAR_TOKEN }} # DO NOT MODIFY
+    #    displayFullReport: 'true'
+
     - uses: ponicode/unit-testing-action@master
       with:
         repoURL: ${{github.repository}} # DO NOT MODIFY
         branch: ${{ steps.extract_branch.outputs.BRANCH_NAME }} # DO NOT MODIFY
         githubToken: ${{ secrets.GITHUB_TOKEN }} # DO NOT MODIFY
         ponicodeUtToken: ${{ secrets.PONICODE_TOKEN }} # DO NOT MODIFY
-        impactedFiles: ${{ steps.ponicode_squar.outputs.impacted_files }} # DO NOT MODIFY IF YOU WANT TO GENERATE TESTS ON SQUAR OUTCOME ONLY
+        impactedFiles: ${{ steps.get_changed_files.outputs.added_modified }} # DO NOT MODIFY IF YOU WANT TO GENERATE TESTS ON SQUAR OUTCOME ONLY
         commentUTs: "false"
 
         
