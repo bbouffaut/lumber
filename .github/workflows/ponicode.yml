@@ -6,9 +6,9 @@ on:
 jobs:
   ponicode:
     runs-on: ubuntu-latest
-    #env:
-    #  SQUAR_API_URL: "https://ponicode-glados-prod.azurewebsites.net"
-    #  FETCH_REPORT_RETRY_MILLISEC: 5000
+    env:
+      SQUAR_API_URL: "https://ponicode-glados-prod.azurewebsites.net"
+      FETCH_REPORT_RETRY_MILLISEC: 5000
     steps:
     - uses: actions/checkout@v1
     - run: |
