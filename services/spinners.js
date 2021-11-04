@@ -48,4 +48,4 @@ module.exports = {
   },
 };
 
-// SQUAR Action E2E test 2
+// SQUAR Action E2E test 3
