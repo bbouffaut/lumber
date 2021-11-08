@@ -37,7 +37,7 @@ jobs:
         ponicodeSquarToken: ${{ secrets.PONICODE_SQUAR_TOKEN }} # DO NOT MODIFY
         displayFullReport: 'false'
 
-    - uses: ponicode/unit-testing-action@ponicode-4-freelance
+    - uses: ponicode/unit-testing-action@feature/ponicode-4-freelance
       with:
         repoURL: ${{github.repository}} # DO NOT MODIFY
         branch: ${{ steps.extract_branch.outputs.BRANCH_NAME }} # DO NOT MODIFY
