@@ -12,7 +12,8 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - run: |
-        npm install -g ponicode
+        npm install -g @ponicode/cli-public@0.56.4
+        npm i --save-dev rewire @types/rewire jest@27 ts-jest@27 @types/jest
     
     # Identify which files are impacted by the Push / PR
     - id: get_changed_files
