@@ -15,8 +15,8 @@ jobs:
     - uses: actions/checkout@v1
     - run: |
         cp .npmrc $HOME/
-        npm install -g @ponicode/cli-public@0.56.4
-        npm i --save-dev rewire @types/rewire jest@27 ts-jest@27 @types/jest    
+        npm install -g ponicode
+        npm i --save-dev rewire @types/rewire jest@26 ts-jest@26 @types/jest    
     # Identify which files are impacted by the Push / PR
     - id: get_changed_files
       uses: jitterbit/get-changed-files@v1
@@ -40,7 +40,7 @@ jobs:
         ponicodeSquarToken: ${{ secrets.PONICODE_SQUAR_TOKEN }} # DO NOT MODIFY
         displayFullReport: 'true'
 
-    - uses: ponicode/unit-testing-action@feature/ponicode-4-freelance
+    - uses: ponicode/unit-testing-action@master
       with:
         repoURL: ${{github.repository}} # DO NOT MODIFY
         branch: ${{ steps.extract_branch.outputs.BRANCH_NAME }} # DO NOT MODIFY
