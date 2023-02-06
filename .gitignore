@@ -5,3 +5,4 @@ node_modules/
 test-output/
 .scannerwork
 package-lock.json
+ponicode-*.json
